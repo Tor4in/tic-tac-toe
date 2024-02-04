@@ -114,9 +114,9 @@ function App() {
         ))}
       </div>
 			<div className={styles.stats}>
-					<p>X wins: {localStorage.getItem('x')}</p>
-					<p>O wins: {localStorage.getItem('o')}</p>
-					<p>draws: {localStorage.getItem('d')}</p>
+					<p>X wins: {gameStats.x}</p>
+					<p>O wins: {gameStats.o}</p>
+					<p>draws: {gameStats.d}</p>
 					<button className={styles.reset} onClick={clear}>Clear stats</button>
 			</div>
     </>
