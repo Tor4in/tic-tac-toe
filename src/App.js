@@ -63,6 +63,7 @@ function App() {
 				}else{
 					localStorage.setItem('o', (gameStats.o+1).toString())
 				}
+				console.log(1)
 			}else {
 				setMove(e => e+=1)
 			}
@@ -74,7 +75,6 @@ function App() {
       setRect(nextMoveList);
     }
   };
-	console.log(1)
 	let map = useRef(null)
 	let reset = ()=>{
 		for (const e of map.current.children) {
