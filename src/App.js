@@ -68,7 +68,7 @@ function App() {
 				}else {
 					setStats({...gameStats, o: gameStats.o+=1})
 				}
-				// addToStorage(nextMoveList, gameStats)
+				addToStorage(nextMoveList, gameStats)
 			}else {
 				setMove(e => e+=1)
 			}
