@@ -12,7 +12,6 @@ function calculateWinner(value) {
     [0, 4, 8],
     [2, 4, 6],
   ];
-	// console.log('calc')
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (value[a] && value[a] === value[b] && value[a] === value[c]) {
@@ -24,7 +23,6 @@ function calculateWinner(value) {
 let addToStorage = (e, stats)=>{
 	if(calculateWinner(e) === 'x'){
 		localStorage.setItem('x', (stats.x).toString())
-		console.log(localStorage, stats)
 	}else{
 		localStorage.setItem('o', (stats.o).toString())
 	}
@@ -65,15 +63,18 @@ function App() {
 			if(calculateWinner(nextMoveList) != null){
 				setP(`Player ${calculateWinner(nextMoveList)} WON!!!!`)
 				setGame(false)
-				calculateWinner(nextMoveList) === 'x' ? setStats(b =>({...b, x: gameStats.x++})) : setStats(b =>({...b, o: gameStats.o++}))
-				
-				addToStorage(nextMoveList, gameStats)
+				if(calculateWinner(nextMoveList) === 'x'){
+					setStats({...gameStats, x: gameStats.x+=1}) 
+				}else {
+					setStats({...gameStats, o: gameStats.o+=1})
+				}
+				// addToStorage(nextMoveList, gameStats)
 			}else {
 				setMove(e => e+=1)
 			}
 			if(move === 8){
-				setStats(b =>({...b, d: gameStats.d++}))
-				localStorage.setItem('d', (gameStats.d+1).toString())
+				setStats({...gameStats, d: gameStats.d+=1})
+				localStorage.setItem('d', (gameStats.d).toString())
 				setP(`Draw(((`)
 			}
       setRect(nextMoveList);
@@ -102,9 +103,11 @@ function App() {
   return (
     <>
       <div className={styles.topBar}>
-			<p className={styles.next_player}>{p}</p>
-			<button className={styles.reset} onClick={reset}>Resset</button>
-			</div>
+        <p className={styles.next_player}>{p}</p>
+        <button className={styles.reset} onClick={reset}>
+          Resset
+        </button>
+      </div>
       <div className={styles.map} ref={map}>
         {rect.map((e, index) => (
           <button
@@ -117,12 +120,14 @@ function App() {
           </button>
         ))}
       </div>
-			<div className={styles.stats}>
-					<p>X wins: {gameStats.x}</p>
-					<p>O wins: {gameStats.o}</p>
-					<p>draws: {gameStats.d}</p>
-					<button className={styles.reset} onClick={clear}>Clear stats</button>
-			</div>
+      <div className={styles.stats}>
+        <p>X wins: {gameStats.x}</p>
+        <p>O wins: {gameStats.o}</p>
+        <p>draws: {gameStats.d}</p>
+        <button className={styles.reset} onClick={clear}>
+          Clear stats
+        </button>
+      </div>
     </>
   );
 }
