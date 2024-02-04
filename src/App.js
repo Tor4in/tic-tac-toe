@@ -1,0 +1,126 @@
+import { useRef, useState } from "react";
+import "./App.css";
+import styles from "./map.module.css";
+function calculateWinner(value) {
+  const lines = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+  for (let i = 0; i < lines.length; i++) {
+    const [a, b, c] = lines[i];
+    if (value[a] && value[a] === value[b] && value[a] === value[c]) {
+      return value[a];
+    }
+  }
+  return null;
+}
+
+function App() {
+  let [isX, setPlayer] = useState(true);
+  let [rect, setRect] = useState(Array(9).fill(null));
+	{
+		let add = (e)=>{
+			if(localStorage.getItem(e) == null){
+				localStorage.setItem(e, 0)
+			}
+		}
+		add('x')
+		add('o')
+		add('d')
+	}
+	let [gameStats, setStats] = useState({x: parseInt(localStorage.getItem('x')),o:parseInt(localStorage.getItem('o')),d:parseInt(localStorage.getItem('d'))})
+	let [move, setMove] = useState(0)
+	let [p, setP] = useState('Next player: X')
+	let [game, setGame] = useState(true)
+  let nextPlayer = (e) => {
+    if (!e.target.classList.contains(`${styles.active}`) && game) {
+      e.target.classList.add(`${styles.active}`);
+      if (isX) {
+        e.target.classList.add(`${styles.x}`);
+				setP('Next player: O')
+      } else {
+        e.target.classList.add(`${styles.o}`);
+				setP('Next player: X')
+      }
+      setPlayer(!isX);
+      let nextMoveList = rect.slice();
+      isX
+        ? (nextMoveList[e.target.attributes[1].value] = "x")
+        : (nextMoveList[e.target.attributes[1].value] = "0");
+			
+			if(calculateWinner(nextMoveList) != null){
+				setP(`Player ${calculateWinner(nextMoveList)} WON!!!!`)
+				setGame(false)
+				calculateWinner(nextMoveList) === 'x' ? setStats(b =>({...b, x: gameStats.x++})) : setStats(b =>({...b, o: gameStats.o++}))
+				if(calculateWinner(nextMoveList) === 'x'){
+					localStorage.setItem('x', (gameStats.x+1).toString())
+				}else{
+					localStorage.setItem('o', (gameStats.o+1).toString())
+				}
+			}else {
+				setMove(e => e+=1)
+			}
+			if(move === 8){
+				setStats(b =>({...b, d: gameStats.d++}))
+				localStorage.setItem('d', (gameStats.d+1).toString())
+				setP(`Draw(((`)
+			}
+      setRect(nextMoveList);
+    }
+  };
+	console.log(1)
+	let map = useRef(null)
+	let reset = ()=>{
+		for (const e of map.current.children) {
+			if(e.classList.contains(`${styles.active}`) ) {
+				e.classList.add(`${styles.close}`)
+				setTimeout(() => {
+					e.classList = `${styles.rect}`
+				}, 400);
+			}
+		}
+		setMove(0)
+		setRect(Array(9).fill(null))
+		setGame(true)
+		setPlayer(true)
+		setP('Next player: X')
+	}
+	let clear = ()=>{
+		setStats({x: 0, o:0,d:0})
+		localStorage.clear()
+	}
+  return (
+    <>
+      <div className={styles.topBar}>
+			<p className={styles.next_player}>{p}</p>
+			<button className={styles.reset} onClick={reset}>Resset</button>
+			</div>
+      <div className={styles.map} ref={map}>
+        {rect.map((e, index) => (
+          <button
+            className={styles.rect}
+            key={index}
+            data-index={index}
+            onClick={nextPlayer}
+          >
+            {e}
+          </button>
+        ))}
+      </div>
+			<div className={styles.stats}>
+					<p>X wins: {localStorage.getItem('x')}</p>
+					<p>O wins: {localStorage.getItem('o')}</p>
+					<p>draws: {localStorage.getItem('d')}</p>
+					<button className={styles.reset} onClick={clear}>Clear stats</button>
+			</div>
+    </>
+  );
+}
+
+export default App;

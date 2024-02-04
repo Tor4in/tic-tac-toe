@@ -1,0 +1,10 @@
+body{
+	margin: 0;
+	background-color: #828282;
+	display: grid;
+	min-height: 100vh;
+	place-items: center;
+}
+*{
+	box-sizing: border-box;
+}
