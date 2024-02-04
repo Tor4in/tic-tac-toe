@@ -12,6 +12,7 @@ function calculateWinner(value) {
     [0, 4, 8],
     [2, 4, 6],
   ];
+	// console.log('calc')
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (value[a] && value[a] === value[b] && value[a] === value[c]) {
@@ -20,7 +21,14 @@ function calculateWinner(value) {
   }
   return null;
 }
-
+let addToStorage = (e, stats)=>{
+	if(calculateWinner(e) === 'x'){
+		localStorage.setItem('x', (stats.x).toString())
+		console.log(localStorage, stats)
+	}else{
+		localStorage.setItem('o', (stats.o).toString())
+	}
+}
 function App() {
   let [isX, setPlayer] = useState(true);
   let [rect, setRect] = useState(Array(9).fill(null));
@@ -58,12 +66,8 @@ function App() {
 				setP(`Player ${calculateWinner(nextMoveList)} WON!!!!`)
 				setGame(false)
 				calculateWinner(nextMoveList) === 'x' ? setStats(b =>({...b, x: gameStats.x++})) : setStats(b =>({...b, o: gameStats.o++}))
-				if(calculateWinner(nextMoveList) === 'x'){
-					localStorage.setItem('x', (gameStats.x+1).toString())
-				}else{
-					localStorage.setItem('o', (gameStats.o+1).toString())
-				}
-				console.log(1)
+				
+				addToStorage(nextMoveList, gameStats)
 			}else {
 				setMove(e => e+=1)
 			}
